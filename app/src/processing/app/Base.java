@@ -18,7 +18,7 @@
   You should have received a copy of the GNU General Public License
   along with this program; if not, write to the Free Software Foundation,
   Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
-*/
+ */
 
 package processing.app;
 
@@ -79,9 +79,9 @@ public class Base {
   static String currentDirectory = BaseNoGui.currentDirectory;
 
   // p5 icon for the window
-//  static Image icon;
+  //  static Image icon;
 
-//  int editorCount;
+  //  int editorCount;
   List<Editor> editors = Collections.synchronizedList(new ArrayList<Editor>());
   Editor activeEditor;
 
@@ -90,7 +90,7 @@ public class Base {
     System.setProperty("swing.aatext", "true");
 
     BaseNoGui.initLogger();
-    
+
     BaseNoGui.notifier = new GUIUserNotifier();
 
     initPlatform();
@@ -103,40 +103,40 @@ public class Base {
 
     BaseNoGui.initVersion();
 
-//    if (System.getProperty("mrj.version") != null) {
-//      //String jv = System.getProperty("java.version");
-//      String ov = System.getProperty("os.version");
-//      if (ov.startsWith("10.5")) {
-//        System.setProperty("apple.laf.useScreenMenuBar", "true");
-//      }
-//    }
+    //    if (System.getProperty("mrj.version") != null) {
+    //      //String jv = System.getProperty("java.version");
+    //      String ov = System.getProperty("os.version");
+    //      if (ov.startsWith("10.5")) {
+    //        System.setProperty("apple.laf.useScreenMenuBar", "true");
+    //      }
+    //    }
 
     /*
-    commandLine = false;
-    if (args.length >= 2) {
-      if (args[0].startsWith("--")) {
-        commandLine = true;
-      }
-    }
+commandLine = false;
+if (args.length >= 2) {
+  if (args[0].startsWith("--")) {
+    commandLine = true;
+  }
+}
 
-    if (PApplet.javaVersion < 1.5f) {
-      //System.err.println("no way man");
-      Base.showError("Need to install Java 1.5",
-                     "This version of Processing requires    \n" +
-                     "Java 1.5 or later to run properly.\n" +
-                     "Please visit java.com to upgrade.", null);
-    }
-    */
+if (PApplet.javaVersion < 1.5f) {
+  //System.err.println("no way man");
+  Base.showError("Need to install Java 1.5",
+                 "This version of Processing requires    \n" +
+                 "Java 1.5 or later to run properly.\n" +
+                 "Please visit java.com to upgrade.", null);
+}
+     */
 
-//    // Set the look and feel before opening the window
-//    try {
-//      platform.setLookAndFeel();
-//    } catch (Exception e) {
-//      System.err.println("Non-fatal error while setting the Look & Feel.");
-//      System.err.println("The error message follows, however Processing should run fine.");
-//      System.err.println(e.getMessage());
-//      //e.printStackTrace();
-//    }
+    //    // Set the look and feel before opening the window
+    //    try {
+    //      platform.setLookAndFeel();
+    //    } catch (Exception e) {
+    //      System.err.println("Non-fatal error while setting the Look & Feel.");
+    //      System.err.println("The error message follows, however Processing should run fine.");
+    //      System.err.println(e.getMessage());
+    //      //e.printStackTrace();
+    //    }
 
     // Use native popups so they don't look so crappy on osx
     JPopupMenu.setDefaultLightWeightPopupEnabled(false);
@@ -191,8 +191,8 @@ public class Base {
     } catch (ClassNotFoundException cnfe) {
       showError(_("Please install JDK 1.5 or later"),
                 _("Arduino requires a full JDK (not just a JRE)\n" +
-                  "to run. Please install JDK 1.5 or later.\n" +
-                  "More information can be found in the reference."), cnfe);
+                    "to run. Please install JDK 1.5 or later.\n" +
+                    "More information can be found in the reference."), cnfe);
     }
   }
 
@@ -266,63 +266,63 @@ public class Base {
     // them.
     Preferences.save();
 
-      if (parser.isVerifyOrUploadMode()) {
-        splashScreenHelper.close();
-        // Set verbosity for command line build
-        Preferences.set("build.verbose", "" + parser.isDoVerboseBuild());
-        Preferences.set("upload.verbose", "" + parser.isDoVerboseUpload());
+    if (parser.isVerifyOrUploadMode()) {
+      splashScreenHelper.close();
+      // Set verbosity for command line build
+      Preferences.set("build.verbose", "" + parser.isDoVerboseBuild());
+      Preferences.set("upload.verbose", "" + parser.isDoVerboseUpload());
 
-        // Make sure these verbosity preferences are only for the
-        // current session
-        Preferences.setDoSave(false);
+      // Make sure these verbosity preferences are only for the
+      // current session
+      Preferences.setDoSave(false);
 
-        Editor editor = editors.get(0);
+      Editor editor = editors.get(0);
 
-        if (parser.isUploadMode()) {
-          // Build and upload
-          editor.exportHandler.run();
-        } else {
-          // Build only
-          editor.runHandler.run();
-        }
+      if (parser.isUploadMode()) {
+        // Build and upload
+        editor.exportHandler.run();
+      } else {
+        // Build only
+        editor.runHandler.run();
+      }
 
-        // Error during build or upload
-        int res = editor.status.mode;
-        if (res == EditorStatus.ERR)
-          System.exit(1);
+      // Error during build or upload
+      int res = editor.status.mode;
+      if (res == EditorStatus.ERR)
+        System.exit(1);
 
-        // No errors exit gracefully
+      // No errors exit gracefully
+      System.exit(0);
+    }
+    else if (parser.isGuiMode()) {
+      splashScreenHelper.splashText(_("Starting..."));
+
+      // Check if there were previously opened sketches to be restored
+      restoreSketches();
+
+      // Create a new empty window (will be replaced with any files to be opened)
+      if (editors.isEmpty()) {
+        handleNew();
+      }
+
+      // Check for updates
+      if (Preferences.getBoolean("update.check")) {
+        new UpdateCheck(this);
+      }
+    }
+    else if (parser.isNoOpMode()) {
+      // Do nothing (intended for only changing preferences)
+      System.exit(0);
+    }
+    else if (parser.isGetPrefMode()) {
+      String value = Preferences.get(parser.getGetPref(), null);
+      if (value != null) {
+        System.out.println(value);
         System.exit(0);
+      } else {
+        System.exit(4);
       }
-      else if (parser.isGuiMode()) {
-        splashScreenHelper.splashText(_("Starting..."));
-
-        // Check if there were previously opened sketches to be restored
-        restoreSketches();
-
-        // Create a new empty window (will be replaced with any files to be opened)
-        if (editors.isEmpty()) {
-          handleNew();
-        }
-
-        // Check for updates
-        if (Preferences.getBoolean("update.check")) {
-          new UpdateCheck(this);
-        }
-      }
-      else if (parser.isNoOpMode()) {
-        // Do nothing (intended for only changing preferences)
-        System.exit(0);
-      }
-      else if (parser.isGetPrefMode()) {
-        String value = Preferences.get(parser.getGetPref(), null);
-        if (value != null) {
-          System.out.println(value);
-          System.exit(0);
-        } else {
-          System.exit(4);
-        }
-      }
+    }
   }
 
   /**
@@ -348,13 +348,13 @@ public class Base {
         windowPositionValid = false;
       }
       /*
-      int windowX = Preferences.getInteger("last.window.x");
-      int windowY = Preferences.getInteger("last.window.y");
-      if ((windowX < 0) || (windowY < 0) ||
-          (windowX > screenW) || (windowY > screenH)) {
-        windowPositionValid = false;
-      }
-      */
+int windowX = Preferences.getInteger("last.window.x");
+int windowY = Preferences.getInteger("last.window.y");
+if ((windowX < 0) || (windowY < 0) ||
+    (windowX > screenW) || (windowY > screenH)) {
+  windowPositionValid = false;
+}
+       */
     } else {
       windowPositionValid = false;
     }
@@ -437,32 +437,32 @@ public class Base {
     if (path.startsWith(untitledPath)) {
       path = "";
     } else
-    if (BaseNoGui.getPortableFolder() != null) {
-      path = FileUtils.relativePath(BaseNoGui.getPortableFolder().toString(), path);
-      if (path == null)
-        path = "";
-    }
+      if (BaseNoGui.getPortableFolder() != null) {
+        path = FileUtils.relativePath(BaseNoGui.getPortableFolder().toString(), path);
+        if (path == null)
+          path = "";
+      }
     Preferences.set("last.sketch" + index + ".path", path);
   }
 
 
   /*
-  public void storeSketch(Editor editor) {
-    int index = -1;
-    for (int i = 0; i < editorCount; i++) {
-      if (editors[i] == editor) {
-        index = i;
-        break;
-      }
-    }
-    if (index == -1) {
-      System.err.println("Problem storing sketch " + editor.sketch.name);
-    } else {
-      String path = editor.sketch.getMainFilePath();
-      Preferences.set("last.sketch" + index + ".path", path);
+public void storeSketch(Editor editor) {
+  int index = -1;
+  for (int i = 0; i < editorCount; i++) {
+    if (editors[i] == editor) {
+      index = i;
+      break;
     }
   }
-  */
+  if (index == -1) {
+    System.err.println("Problem storing sketch " + editor.sketch.name);
+  } else {
+    String path = editor.sketch.getMainFilePath();
+    Preferences.set("last.sketch" + index + ".path", path);
+  }
+}
+   */
 
 
   // .................................................................
@@ -531,8 +531,8 @@ public class Base {
 
   boolean breakTime = false;
   String[] months = {
-    "jan", "feb", "mar", "apr", "may", "jun",
-    "jul", "aug", "sep", "oct", "nov", "dec"
+      "jan", "feb", "mar", "apr", "may", "jun",
+      "jul", "aug", "sep", "oct", "nov", "dec"
   };
 
   /**
@@ -565,7 +565,7 @@ public class Base {
         if (!breakTime) {
           showWarning(_("Time for a Break"),
                       _("You've reached the limit for auto naming of new sketches\n" +
-                        "for the day. How about going for a walk instead?"), null);
+                          "for the day. How about going for a walk instead?"), null);
           breakTime = true;
         } else {
           showWarning(_("Sunshine"),
@@ -634,11 +634,11 @@ public class Base {
         activeEditor.handleOpenInternal(file);
         activeEditor.untitled = true;
       }
-//      return true;
+      //      return true;
 
     } catch (IOException e) {
       activeEditor.statusError(e);
-//      return false;
+      //      return false;
     }
   }
 
@@ -679,7 +679,7 @@ public class Base {
     fd.setFilenameFilter(new FilenameFilter() {
       public boolean accept(File dir, String name) {
         return name.toLowerCase().endsWith(".ino")
-                || name.toLowerCase().endsWith(".pde");
+            || name.toLowerCase().endsWith(".pde");
       }
     });
 
@@ -711,77 +711,77 @@ public class Base {
 
 
   protected Editor handleOpen(File file, int[] location, boolean showEditor) throws Exception {
-//    System.err.println("entering handleOpen " + path);
+    //    System.err.println("entering handleOpen " + path);
 
     if (!file.exists()) return null;
 
-//    System.err.println("  editors: " + editors);
+    //    System.err.println("  editors: " + editors);
     // Cycle through open windows to make sure that it's not already open.
     String path = file.getAbsolutePath();
     for (Editor editor : editors) {
       if (editor.getSketch().getMainFilePath().equals(path)) {
         editor.toFront();
-//        System.err.println("  handleOpen: already opened");
+        //        System.err.println("  handleOpen: already opened");
         return editor;
       }
     }
 
     // If the active editor window is an untitled, and un-modified document,
     // just replace it with the file that's being opened.
-//    if (activeEditor != null) {
-//      Sketch activeSketch = activeEditor.sketch;
-//      if (activeSketch.isUntitled() && !activeSketch.isModified()) {
-//        // if it's an untitled, unmodified document, it can be replaced.
-//        // except in cases where a second blank window is being opened.
-//        if (!path.startsWith(untitledFolder.getAbsolutePath())) {
-//          activeEditor.handleOpenUnchecked(path, 0, 0, 0, 0);
-//          return activeEditor;
-//        }
-//      }
-//    }
+    //    if (activeEditor != null) {
+    //      Sketch activeSketch = activeEditor.sketch;
+    //      if (activeSketch.isUntitled() && !activeSketch.isModified()) {
+    //        // if it's an untitled, unmodified document, it can be replaced.
+    //        // except in cases where a second blank window is being opened.
+    //        if (!path.startsWith(untitledFolder.getAbsolutePath())) {
+    //          activeEditor.handleOpenUnchecked(path, 0, 0, 0, 0);
+    //          return activeEditor;
+    //        }
+    //      }
+    //    }
 
-//    System.err.println("  creating new editor");
+    //    System.err.println("  creating new editor");
     Editor editor = new Editor(this, file, location);
-//    Editor editor = null;
-//    try {
-//      editor = new Editor(this, path, location);
-//    } catch (Exception e) {
-//      e.printStackTrace();
-//      System.err.flush();
-//      System.out.flush();
-//      System.exit(1);
-//    }
-//    System.err.println("  done creating new editor");
-//    EditorConsole.systemErr.println("  done creating new editor");
+    //    Editor editor = null;
+    //    try {
+    //      editor = new Editor(this, path, location);
+    //    } catch (Exception e) {
+    //      e.printStackTrace();
+    //      System.err.flush();
+    //      System.out.flush();
+    //      System.exit(1);
+    //    }
+    //    System.err.println("  done creating new editor");
+    //    EditorConsole.systemErr.println("  done creating new editor");
 
     // Make sure that the sketch actually loaded
     if (editor.getSketch() == null) {
-//      System.err.println("sketch was null, getting out of handleOpen");
+      //      System.err.println("sketch was null, getting out of handleOpen");
       return null;  // Just walk away quietly
     }
 
-//    if (editors == null) {
-//      editors = new Editor[5];
-//    }
-//    if (editorCount == editors.length) {
-//      editors = (Editor[]) PApplet.expand(editors);
-//    }
-//    editors[editorCount++] = editor;
+    //    if (editors == null) {
+    //      editors = new Editor[5];
+    //    }
+    //    if (editorCount == editors.length) {
+    //      editors = (Editor[]) PApplet.expand(editors);
+    //    }
+    //    editors[editorCount++] = editor;
     editors.add(editor);
 
-//    if (markedForClose != null) {
-//      Point p = markedForClose.getLocation();
-//      handleClose(markedForClose, false);
-//      // open the new window in
-//      editor.setLocation(p);
-//    }
+    //    if (markedForClose != null) {
+    //      Point p = markedForClose.getLocation();
+    //      handleClose(markedForClose, false);
+    //      // open the new window in
+    //      editor.setLocation(p);
+    //    }
 
     // now that we're ready, show the window
     // (don't do earlier, cuz we might move it based on a window being closed)
     if (showEditor)
       editor.setVisible(true);
 
-//    System.err.println("exiting handleOpen");
+    //    System.err.println("exiting handleOpen");
 
     return editor;
   }
@@ -794,7 +794,7 @@ public class Base {
    */
   public boolean handleClose(Editor editor) {
     // Check if modified
-//    boolean immediate = editors.size() == 1;
+    //    boolean immediate = editors.size() == 1;
     if (!editor.checkModified()) {
       return false;
     }
@@ -805,18 +805,18 @@ public class Base {
     if (editors.size() == 1) {
       // For 0158, when closing the last window /and/ it was already an
       // untitled sketch, just give up and let the user quit.
-//      if (Preferences.getBoolean("sketchbook.closing_last_window_quits") ||
-//          (editor.untitled && !editor.getSketch().isModified())) {
+      //      if (Preferences.getBoolean("sketchbook.closing_last_window_quits") ||
+      //          (editor.untitled && !editor.getSketch().isModified())) {
       if (OSUtils.isMacOS()) {
         Object[] options = { "OK", "Cancel" };
         String prompt =
-          _("<html> " +
-            "<head> <style type=\"text/css\">"+
-            "b { font: 13pt \"Lucida Grande\" }"+
-            "p { font: 11pt \"Lucida Grande\"; margin-top: 8px }"+
-            "</style> </head>" +
-            "<b>Are you sure you want to Quit?</b>" +
-            "<p>Closing the last open sketch will quit Arduino.");
+            _("<html> " +
+                "<head> <style type=\"text/css\">"+
+                "b { font: 13pt \"Lucida Grande\" }"+
+                "p { font: 11pt \"Lucida Grande\"; margin-top: 8px }"+
+                "</style> </head>" +
+                "<b>Are you sure you want to Quit?</b>" +
+                "<p>Closing the last open sketch will quit Arduino.");
 
         int result = JOptionPane.showOptionDialog(editor,
                                                   prompt,
@@ -852,16 +852,16 @@ public class Base {
       // proceed with closing the current window.
       editor.setVisible(false);
       editor.dispose();
-//      for (int i = 0; i < editorCount; i++) {
-//        if (editor == editors[i]) {
-//          for (int j = i; j < editorCount-1; j++) {
-//            editors[j] = editors[j+1];
-//          }
-//          editorCount--;
-//          // Set to null so that garbage collection occurs
-//          editors[editorCount] = null;
-//        }
-//      }
+      //      for (int i = 0; i < editorCount; i++) {
+      //        if (editor == editors[i]) {
+      //          for (int j = i; j < editorCount-1; j++) {
+      //            editors[j] = editors[j+1];
+      //          }
+      //          editorCount--;
+      //          // Set to null so that garbage collection occurs
+      //          editors[editorCount] = null;
+      //        }
+      //      }
       editors.remove(editor);
     }
     return true;
@@ -950,14 +950,14 @@ public class Base {
     // Add the single "Open" item
     item = Editor.newJMenuItem(_("Open..."), 'O');
     item.addActionListener(new ActionListener() {
-        public void actionPerformed(ActionEvent e) {
-          try {
-            handleOpenPrompt();
-          } catch (Exception e1) {
-            e1.printStackTrace();
-          }
+      public void actionPerformed(ActionEvent e) {
+        try {
+          handleOpenPrompt();
+        } catch (Exception e1) {
+          e1.printStackTrace();
         }
-      });
+      }
+    });
     menu.add(item);
     menu.addSeparator();
 
@@ -983,9 +983,9 @@ public class Base {
     //System.out.println("rebuilding sketchbook menu");
     //new Exception().printStackTrace();
     try {
-        menu.removeAll();
+      menu.removeAll();
       addSketches(menu, getSketchbookFolder(), false);
-      //addSketches(menu, getSketchbookFolder());
+//      addSketches(menu, getSketchbookFolder());
     } catch (IOException e) {
       e.printStackTrace();
     }
@@ -1019,10 +1019,10 @@ public class Base {
     });
     importMenu.add(addLibraryMenuItem);
     importMenu.addSeparator();
-    
+
     // Split between user supplied libraries and IDE libraries
     TargetPlatform targetPlatform = getTargetPlatform();
-    
+
     if (targetPlatform != null) {
       LibraryList ideLibs = getIDELibs();
       LibraryList userLibs = getUserLibs();
@@ -1118,7 +1118,7 @@ public class Base {
     }
     for (String title : titles)
       makeBoardCustomMenu(toolsMenu, _(title));
-    
+
     // Cycle through all packages
     for (TargetPackage targetPackage : BaseNoGui.packages.values()) {
       // For every package cycle through all platform
@@ -1159,10 +1159,10 @@ public class Base {
   }
 
   private JRadioButtonMenuItem createBoardMenusAndCustomMenus(
-          List<JMenuItem> menuItemsToClickAfterStartup,
-          Map<String, ButtonGroup> buttonGroupsMap,
-          TargetBoard board, TargetPlatform targetPlatform, TargetPackage targetPackage)
-      throws Exception {
+                                                              List<JMenuItem> menuItemsToClickAfterStartup,
+                                                              Map<String, ButtonGroup> buttonGroupsMap,
+                                                              TargetBoard board, TargetPlatform targetPlatform, TargetPackage targetPackage)
+                                                                  throws Exception {
     String selPackage = Preferences.get("target_package");
     String selPlatform = Preferences.get("target_platform");
     String selBoard = Preferences.get("board");
@@ -1170,7 +1170,7 @@ public class Base {
     String boardId = board.getId();
     String packageName = targetPackage.getId();
     String platformName = targetPlatform.getId();
-    
+
     // Setup a menu item for the current board
     @SuppressWarnings("serial")
     Action action = new AbstractAction(board.getName()) {
@@ -1196,7 +1196,7 @@ public class Base {
     for (final String menuId : customMenus.keySet()) {
       String title = customMenus.get(menuId);
       JMenu menu = getBoardCustomMenu(_(title));
-      
+
       if (board.hasMenu(menuId)) {
         PreferencesMap boardCustomMenu = board.getMenuLabels(menuId);
         for (String customMenuOption : boardCustomMenu.keySet()) {
@@ -1225,7 +1225,7 @@ public class Base {
         }
       }
     }
-    
+
     return item;
   }
 
@@ -1267,7 +1267,7 @@ public class Base {
   private JMenu getBoardCustomMenu() throws Exception {
     return getBoardCustomMenu(_("Board"));
   }
-  
+
   private JMenu getBoardCustomMenu(String label) throws Exception {
     for (JMenu menu : Editor.boardsMenus)
       if (label.equals(menu.getText()))
@@ -1325,7 +1325,7 @@ public class Base {
 
           @SuppressWarnings("serial")
           AbstractAction action = new AbstractAction(targetPlatform
-              .getProgrammer(programmer).get("name")) {
+                                                     .getProgrammer(programmer).get("name")) {
             public void actionPerformed(ActionEvent actionevent) {
               Preferences.set("programmer", "" + getValue("id"));
             }
@@ -1337,25 +1337,271 @@ public class Base {
           group.add(item);
           menu.add(item);
         }
+      } 
+    }
+  }
+//-----------------------------------------------------
+//    /**
+//     * Scan a folder recursively, and add any sketches found to the menu
+//     * specified. Set the openReplaces parameter to true when opening the sketch
+//     * should replace the sketch in the current window, or false when the
+//     * sketch should open in a new window.
+//     */
+//    protected boolean addSketches(JMenu menu, File folder, final boolean replaceExisting) throws IOException {
+//      if (folder == null)
+//        return false;
+//  
+//      if (!folder.isDirectory()) return false;
+//  
+//      File[] files = folder.listFiles();
+//      // If a bad folder or unreadable or whatever, this will come back null
+//      if (files == null) return false;
+//  
+//      // Alphabetize files, since it's not always alpha order
+//      Arrays.sort(files, new Comparator<File>() {
+//        @Override
+//        public int compare(File file, File file2) {
+//          return file.getName().compareToIgnoreCase(file2.getName());
+//        }
+//      });
+//  
+//      boolean ifound = false;
+//  
+//      for (File subfolder : files) {
+//        if (FileUtils.isSCCSOrHiddenFile(subfolder)) {
+//          continue;
+//        }
+//  
+//        if (!subfolder.isDirectory()) continue;
+//  
+//        if (addSketchesSubmenu(menu, subfolder.getName(), subfolder, replaceExisting)) {
+//          ifound = true;
+//        }
+//      }
+//  
+//      return ifound;
+//    }
+//  
+//    private boolean addSketchesSubmenu(JMenu menu, Library lib,
+//                                       boolean replaceExisting)
+//        throws IOException {
+//      return addSketchesSubmenu(menu, lib.getName(), lib.getFolder(),
+//                                replaceExisting);
+//    }
+//  
+//    private boolean addSketchesSubmenu(JMenu menu, String name, File folder,
+//                           final boolean replaceExisting) throws IOException {
+//    
+//      ActionListener listener = new ActionListener() {
+//        public void actionPerformed(ActionEvent e) {
+//          String path = e.getActionCommand();
+//          File file = new File(path);
+//          if (file.exists()) {
+//            boolean replace = replaceExisting;
+//            if ((e.getModifiers() & ActionEvent.SHIFT_MASK) != 0) {
+//              replace = !replace;
+//            }
+//            if (replace) {
+//              handleOpenReplace(file);
+//            } else {
+//              try {
+//                handleOpen(file);
+//              } catch (Exception e1) {
+//                e1.printStackTrace();
+//              }
+//            }
+//          } else {
+//            showWarning(_("Sketch Does Not Exist"),
+//                        _("The selected sketch no longer exists.\n"
+//                            + "You may need to restart Arduino to update\n"
+//                            + "the sketchbook menu."), null);
+//          }
+//        }
+//      };
+//  
+//      File entry = new File(folder, name + ".ino");
+//      if (!entry.exists() && (new File(folder, name + ".pde")).exists())
+//        entry = new File(folder, name + ".pde");
+//  
+//      // if a .pde file of the same prefix as the folder exists..
+//      if (entry.exists()) {
+//  
+//        if (!BaseNoGui.isSanitaryName(name)) {
+//          if (!builtOnce) {
+//            String complaining = I18n
+//                .format(
+//                        _("The sketch \"{0}\" cannot be used.\n"
+//                            + "Sketch names must contain only basic letters and numbers\n"
+//                            + "(ASCII-only with no spaces, "
+//                            + "and it cannot start with a number).\n"
+//                            + "To get rid of this message, remove the sketch from\n"
+//                            + "{1}"), name, entry.getAbsolutePath());
+//            showMessage(_("Ignoring sketch with bad name"), complaining);
+//          }
+//          return false;
+//        }
+//  
+//        JMenuItem item = new JMenuItem(name);
+//        item.addActionListener(listener);
+//        item.setActionCommand(entry.getAbsolutePath());
+//        menu.add(item);
+//        return true;
+//      }
+//  
+//      // don't create an extra menu level for a folder named "examples"
+//      if (folder.getName().equals("examples"))
+//        return addSketches(menu, folder, replaceExisting);
+//  
+//      // not a sketch folder, but maybe a subfolder containing sketches
+//      JMenu submenu = new JMenu(name);
+//      boolean found = addSketches(submenu, folder, replaceExisting);
+//      if (found) {
+//        menu.add(submenu);
+//        MenuScroller.setScrollerFor(submenu);
+//      }
+//      return found;
+//    }
+
+// ---------------------------------------------------------------
+
+  /**
+   * A data structure for holding files and folders, used for both the
+   * libraries and the projects. Includes a toString() which prints it as a
+   * tree with indented hierarchy.
+   */
+  private static class FileTree {
+    private static final String folderMarker = "> ";
+    private static final String singleIndentation = "    ";
+
+    private File folder;
+    private List<FileTree> subfolders;
+    private List<File> files;
+
+    // /**
+    // * Default constructor. A new FileTree with a null root and no
+    // * subfolders or files.
+    // */
+    // public FileTree() {
+    // this(null);
+    // }
+
+    // /** Add the folder f as the root of the tree. */
+    // public void addRoot(File f) {
+    // folder = f;
+    // }
+
+    /**
+     * Constructor. A new FileTree with root root and no subfolders or
+     * files.
+     */
+    public FileTree(File root) {
+      folder = root;
+      subfolders = new ArrayList<FileTree>();
+      files = new ArrayList<File>();
+    }
+
+    /** The name of the root folder, or null if no root folder. */
+    public String getName() {
+      return (folder != null ? folder.getName() : null);
+    }
+
+    /** The root folder of this subtree. */
+    public File getRoot() {
+      return folder;
+    }
+
+    /** Add the FileTree sf representing a subfolder. */
+    public void addSubfolder(FileTree sf) {
+      subfolders.add(sf);
+    }
+
+    /** Add the file f. */
+    public void addFile(File f) {
+      files.add(f);
+    }
+
+    /** There are no subfolders in this tree */
+    public boolean hasNoChildren() {
+      // TODO Auto-generated method stub
+      return subfolders.isEmpty();
+    }
+    
+    /**
+     * A String representation of the FileTree. Assumes that the root is at
+     * depth 0.
+     * 
+     * Prints first the files in the folder, then all it's subfolders.
+     */
+    @Override
+    public String toString() {
+      return toString(0);
+    }
+
+    /**
+     * A String representation of the FileTree indented to the depth
+     * specified by level.
+     * 
+     * Prints first the files in the folder, then all it's subfolders.
+     */
+    public String toString(int level) {
+      // Sort the files and subfolders.
+      files.sort(new Comparator<File>() {
+        @Override
+        public int compare(File file, File file2) {
+          return file.getName().compareToIgnoreCase(file2.getName());
+        }
+      });
+      subfolders.sort(new Comparator<FileTree>() {
+        @Override
+        public int compare(FileTree ft, FileTree ft2) {
+          return ft.folder.getName().compareToIgnoreCase(
+                                                         ft2.folder.getName());
+        }
+      });
+
+      // increment the level variable for the indentation-building loop
+      // and to pass on to the toString functions of the subtrees.
+      level++;
+      String indentation = "";
+      for (int i = 0; i < level; i++) {
+        indentation += singleIndentation;
       }
+
+      // Shall contain all the output in a format easy to add onto.
+      StringBuffer output = new StringBuffer(folderMarker
+                                             + folder.getName() + "\n");
+
+      // Include all the files in the folder.
+      for (File f : files) {
+        output.append(indentation)
+        .append(f.getName().substring(0,
+                                      f.getName().lastIndexOf("."))).append("\n");
+      }
+
+      // Include all the subfiles.
+      for (FileTree sub : subfolders) {
+        output.append(indentation).append(sub.toString(level));
+      }
+
+      // Convert output into a string and return.
+      return output.toString();
     }
   }
 
   /**
-   * Scan a folder recursively, and add any sketches found to the menu
-   * specified. Set the openReplaces parameter to true when opening the sketch
-   * should replace the sketch in the current window, or false when the
-   * sketch should open in a new window.
+   * Scan a folder recursively and add any sketches found to a new file tree.
    */
-  protected boolean addSketches(JMenu menu, File folder, final boolean replaceExisting) throws IOException {
+  private boolean addFiles(FileTree tree, File folder) {
     if (folder == null)
       return false;
 
-    if (!folder.isDirectory()) return false;
+    if (!folder.isDirectory())
+      return false;
 
     File[] files = folder.listFiles();
     // If a bad folder or unreadable or whatever, this will come back null
-    if (files == null) return false;
+    if (files == null)
+      return false;
 
     // Alphabetize files, since it's not always alpha order
     Arrays.sort(files, new Comparator<File>() {
@@ -1365,102 +1611,158 @@ public class Base {
       }
     });
 
-    boolean ifound = false;
+    boolean ifound= false;
 
     for (File subfolder : files) {
       if (FileUtils.isSCCSOrHiddenFile(subfolder)) {
-        continue;
+        continue; 
       }
 
-      if (!subfolder.isDirectory()) continue;
+      if (!subfolder.isDirectory())
+        continue;
 
-      if (addSketchesSubmenu(menu, subfolder.getName(), subfolder, replaceExisting)) {
+      if (addSubfile(tree, subfolder)) {
         ifound = true;
       }
     }
-
     return ifound;
   }
 
+  /** Add the file file to the tree tree, be it a file or a folder 
+   * @return */
+  private boolean addSubfile(FileTree tree, File file) {
+    String name = file.getName(); // The name of the folder.
+
+    File entry = new File(file, name + ".ino");
+    if (!entry.exists() && (new File(file, name + ".pde")).exists()) {
+      entry = new File(file, name + ".pde");
+    }
+
+    // if a .pde file of the same prefix as the folder exists..
+    if (entry.exists()) {
+      if (!BaseNoGui.isSanitaryName(name)) {
+        if (!builtOnce) {
+          String complaining = I18n
+              .format(_("The sketch \"{0}\" cannot be used.\n"
+                  + "Sketch names must contain only basic letters and numbers\n"
+                  + "(ASCII-only with no spaces, "
+                  + "and it cannot start with a number).\n"
+                  + "To get rid of this message, remove the sketch from\n"
+                  + "{1}"), name, entry.getAbsolutePath());
+          showMessage(_("Ignoring sketch with bad name"), complaining);
+        }
+        return false;
+      }
+      tree.addFile(entry);
+      return true;
+    }
+
+    // don't create an extra menu level for a folder named "examples"
+    if (file.getName().equals("examples"))
+      return addFiles(tree, file);
+
+    // not a sketch folder, but maybe a subfolder containing sketches
+    FileTree subtree = new FileTree(file);
+    boolean found= addFiles(subtree, file);
+
+    if (found) {
+      tree.addSubfolder(subtree);
+    }
+    return found;
+  }
+
+  /**
+   * Navigates a FileTree recursively and adds its folders to the menu
+   * specified. Set the openReplaces parameter to true when opening the sketch
+   * should replace the sketch in the current window, or false when the sketch
+   * should open in a new window.
+   */
+  private void addSketchesFromTree(JMenu menu, FileTree tree,
+                                   final boolean replaceExisting) {
+    for (FileTree subfolder : tree.subfolders) {      
+      if (subfolder.hasNoChildren()) {
+        for (File subfile : subfolder.files) {
+        ActionListener listener = new ActionListener() {
+          public void actionPerformed(ActionEvent e) {
+            String path = e.getActionCommand();
+            File file = new File(path);
+            if (file.exists()) {
+              boolean replace = replaceExisting;
+              if ((e.getModifiers() & ActionEvent.SHIFT_MASK) != 0) {
+                replace = !replace;
+              }
+              if (replace) {
+                handleOpenReplace(file);
+              } else {
+                try {
+                  handleOpen(file);
+                } catch (Exception e1) {
+                  e1.printStackTrace();
+                }
+              }
+            } else {
+              showWarning(_("Sketch Does Not Exist"),
+                  _("The selected sketch no longer exists.\n"
+                      + "You may need to restart Arduino to update\n"
+                      + "the sketchbook menu."), null);
+            }
+          }
+        };
+        String name= subfile.getName();
+        name= name.substring(0,name.length()-5);
+        JMenuItem item = new JMenuItem(name);
+        item.addActionListener(listener);
+        item.setActionCommand(subfile.getAbsolutePath());
+        menu.add(item);
+        }
+      } else {
+        JMenu submenu = new JMenu(subfolder.getName());
+        addSketchesFromTree(submenu, subfolder, replaceExisting);
+        menu.add(submenu);
+        MenuScroller.setScrollerFor(submenu);
+      }
+    }
+
+  }
+
+  /**
+   * Scan a folder recursively, and add any sketches found to the menu
+   * specified. Set the openReplaces parameter to true when opening the sketch
+   * should replace the sketch in the current window, or false when the sketch
+   * should open in a new window.
+   */
+  protected boolean addSketches(JMenu menu, File folder,
+                       final boolean replaceExisting) throws IOException {
+    FileTree tree = new FileTree(folder);
+    boolean found= addFiles(tree, folder);
+
+    if (!found)
+      return false;
+    addSketchesFromTree(menu, tree, replaceExisting);
+    return true;
+  }
+
   private boolean addSketchesSubmenu(JMenu menu, Library lib,
-                                     boolean replaceExisting)
-      throws IOException {
+                                     boolean replaceExisting) throws IOException {
     return addSketchesSubmenu(menu, lib.getName(), lib.getFolder(),
                               replaceExisting);
   }
 
   private boolean addSketchesSubmenu(JMenu menu, String name, File folder,
-                         final boolean replaceExisting) throws IOException {
-
-    ActionListener listener = new ActionListener() {
-      public void actionPerformed(ActionEvent e) {
-        String path = e.getActionCommand();
-        File file = new File(path);
-        if (file.exists()) {
-          boolean replace = replaceExisting;
-          if ((e.getModifiers() & ActionEvent.SHIFT_MASK) != 0) {
-            replace = !replace;
-          }
-          if (replace) {
-            handleOpenReplace(file);
-          } else {
-            try {
-              handleOpen(file);
-            } catch (Exception e1) {
-              e1.printStackTrace();
-            }
-          }
-        } else {
-          showWarning(_("Sketch Does Not Exist"),
-                      _("The selected sketch no longer exists.\n"
-                          + "You may need to restart Arduino to update\n"
-                          + "the sketchbook menu."), null);
-        }
-      }
-    };
-
-    File entry = new File(folder, name + ".ino");
-    if (!entry.exists() && (new File(folder, name + ".pde")).exists())
-      entry = new File(folder, name + ".pde");
-
-    // if a .pde file of the same prefix as the folder exists..
-    if (entry.exists()) {
-
-      if (!BaseNoGui.isSanitaryName(name)) {
-        if (!builtOnce) {
-          String complaining = I18n
-              .format(
-                      _("The sketch \"{0}\" cannot be used.\n"
-                          + "Sketch names must contain only basic letters and numbers\n"
-                          + "(ASCII-only with no spaces, "
-                          + "and it cannot start with a number).\n"
-                          + "To get rid of this message, remove the sketch from\n"
-                          + "{1}"), name, entry.getAbsolutePath());
-          showMessage(_("Ignoring sketch with bad name"), complaining);
-        }
-        return false;
-      }
-
-      JMenuItem item = new JMenuItem(name);
-      item.addActionListener(listener);
-      item.setActionCommand(entry.getAbsolutePath());
-      menu.add(item);
-      return true;
-    }
-
-    // don't create an extra menu level for a folder named "examples"
-    if (folder.getName().equals("examples"))
-      return addSketches(menu, folder, replaceExisting);
-
+                                     final boolean replaceExisting) throws IOException {
+    
+    FileTree tree = new FileTree(folder);
+    boolean found= addSubfile(tree, folder);
+    
     // not a sketch folder, but maybe a subfolder containing sketches
-    JMenu submenu = new JMenu(name);
-    boolean found = addSketches(submenu, folder, replaceExisting);
-    if (found) {
-      menu.add(submenu);
-      MenuScroller.setScrollerFor(submenu);
-    }
+    if (found)
+       addSketchesFromTree(menu, tree, replaceExisting);
+    
     return found;
   }
+
+  
+  //-----------------------------------------------
 
   protected void addLibraries(JMenu menu, LibraryList libs) throws IOException {
 
@@ -1518,23 +1820,23 @@ public class Base {
   public void handleAbout() {
     final Image image = getLibImage("about.jpg", activeEditor);
     final Window window = new Window(activeEditor) {
-        public void paint(Graphics g) {
-          g.drawImage(image, 0, 0, null);
+      public void paint(Graphics g) {
+        g.drawImage(image, 0, 0, null);
 
-          Graphics2D g2 = (Graphics2D) g;
-          g2.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING,
-                              RenderingHints.VALUE_TEXT_ANTIALIAS_OFF);
+        Graphics2D g2 = (Graphics2D) g;
+        g2.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING,
+                            RenderingHints.VALUE_TEXT_ANTIALIAS_OFF);
 
-          g.setFont(new Font("SansSerif", Font.PLAIN, 11));
-          g.setColor(Color.white);
-          g.drawString(BaseNoGui.VERSION_NAME, 50, 30);
-        }
-      };
+        g.setFont(new Font("SansSerif", Font.PLAIN, 11));
+        g.setColor(Color.white);
+        g.drawString(BaseNoGui.VERSION_NAME, 50, 30);
+      }
+    };
     window.addMouseListener(new MouseAdapter() {
-        public void mousePressed(MouseEvent e) {
-          window.dispose();
-        }
-      });
+      public void mousePressed(MouseEvent e) {
+        window.dispose();
+      }
+    });
     int w = image.getWidth(activeEditor);
     int h = image.getHeight(activeEditor);
     Dimension screen = Toolkit.getDefaultToolkit().getScreenSize();
@@ -1558,27 +1860,27 @@ public class Base {
   /**
    * Get list of platform constants.
    */
-//  static public int[] getPlatforms() {
-//    return platforms;
-//  }
+  //  static public int[] getPlatforms() {
+  //    return platforms;
+  //  }
 
 
-//  static public int getPlatform() {
-//    String osname = System.getProperty("os.name");
-//
-//    if (osname.indexOf("Mac") != -1) {
-//      return PConstants.MACOSX;
-//
-//    } else if (osname.indexOf("Windows") != -1) {
-//      return PConstants.WINDOWS;
-//
-//    } else if (osname.equals("Linux")) {  // true for the ibm vm
-//      return PConstants.LINUX;
-//
-//    } else {
-//      return PConstants.OTHER;
-//    }
-//  }
+  //  static public int getPlatform() {
+  //    String osname = System.getProperty("os.name");
+  //
+  //    if (osname.indexOf("Mac") != -1) {
+  //      return PConstants.MACOSX;
+  //
+  //    } else if (osname.indexOf("Windows") != -1) {
+  //      return PConstants.WINDOWS;
+  //
+  //    } else if (osname.equals("Linux")) {  // true for the ibm vm
+  //      return PConstants.LINUX;
+  //
+  //    } else {
+  //      return PConstants.OTHER;
+  //    }
+  //  }
 
 
   static public Platform getPlatform() {
@@ -1672,7 +1974,7 @@ public class Base {
 
   //Get the core libraries
   static public File getCoreLibraries(String path) {
-  	return getContentFile(path);
+    return getContentFile(path);
   }
 
   static public String getHardwarePath() {
@@ -1770,7 +2072,7 @@ public class Base {
     if (!result) {
       showError(_("You forgot your sketchbook"),
                 _("Arduino cannot run because it could not\n" +
-                  "create a folder to store your sketchbook."), null);
+                    "create a folder to store your sketchbook."), null);
     }
 
     return sketchbookFolder;
@@ -1887,15 +2189,15 @@ public class Base {
    * Use as part of a keyPressed() event handler for frames.
    */
   /*
-  static public boolean isCloseWindowEvent(KeyEvent e) {
-    if (closeWindowKeyStroke == null) {
-      int modifiers = Toolkit.getDefaultToolkit().getMenuShortcutKeyMask();
-      closeWindowKeyStroke = KeyStroke.getKeyStroke('W', modifiers);
-    }
-    return ((e.getKeyCode() == KeyEvent.VK_ESCAPE) ||
-            KeyStroke.getKeyStrokeForEvent(e).equals(closeWindowKeyStroke));
+static public boolean isCloseWindowEvent(KeyEvent e) {
+  if (closeWindowKeyStroke == null) {
+    int modifiers = Toolkit.getDefaultToolkit().getMenuShortcutKeyMask();
+    closeWindowKeyStroke = KeyStroke.getKeyStroke('W', modifiers);
   }
-  */
+  return ((e.getKeyCode() == KeyEvent.VK_ESCAPE) ||
+          KeyStroke.getKeyStrokeForEvent(e).equals(closeWindowKeyStroke));
+}
+   */
 
   /**
    * Registers key events for a Ctrl-W and ESC with an ActionListener
@@ -2002,35 +2304,35 @@ public class Base {
                                             String primary, String secondary) {
     if (!OSUtils.isMacOS()) {
       int result =
-        JOptionPane.showConfirmDialog(null, primary + "\n" + secondary, title,
-                                      JOptionPane.YES_NO_CANCEL_OPTION,
-                                      JOptionPane.QUESTION_MESSAGE);
+          JOptionPane.showConfirmDialog(null, primary + "\n" + secondary, title,
+                                        JOptionPane.YES_NO_CANCEL_OPTION,
+                                        JOptionPane.QUESTION_MESSAGE);
       return result;
-//    if (result == JOptionPane.YES_OPTION) {
-//
-//    } else if (result == JOptionPane.NO_OPTION) {
-//      return true;  // ok to continue
-//
-//    } else if (result == JOptionPane.CANCEL_OPTION) {
-//      return false;
-//
-//    } else {
-//      throw new IllegalStateException();
-//    }
+      //    if (result == JOptionPane.YES_OPTION) {
+      //
+      //    } else if (result == JOptionPane.NO_OPTION) {
+      //      return true;  // ok to continue
+      //
+      //    } else if (result == JOptionPane.CANCEL_OPTION) {
+      //      return false;
+      //
+      //    } else {
+      //      throw new IllegalStateException();
+      //    }
 
     } else {
       // Pane formatting adapted from the Quaqua guide
       // http://www.randelshofer.ch/quaqua/guide/joptionpane.html
       JOptionPane pane =
-        new JOptionPane("<html> " +
-                        "<head> <style type=\"text/css\">"+
-                        "b { font: 13pt \"Lucida Grande\" }"+
-                        "p { font: 11pt \"Lucida Grande\"; margin-top: 8px }"+
-                        "</style> </head>" +
-                        "<b>Do you want to save changes to this sketch<BR>" +
-                        " before closing?</b>" +
-                        "<p>If you don't save, your changes will be lost.",
-                        JOptionPane.QUESTION_MESSAGE);
+          new JOptionPane("<html> " +
+              "<head> <style type=\"text/css\">"+
+              "b { font: 13pt \"Lucida Grande\" }"+
+              "p { font: 11pt \"Lucida Grande\"; margin-top: 8px }"+
+              "</style> </head>" +
+              "<b>Do you want to save changes to this sketch<BR>" +
+              " before closing?</b>" +
+              "<p>If you don't save, your changes will be lost.",
+              JOptionPane.QUESTION_MESSAGE);
 
       String[] options = new String[] {
           "Save", "Cancel", "Don't Save"
@@ -2062,39 +2364,39 @@ public class Base {
   }
 
 
-//if (result == JOptionPane.YES_OPTION) {
+  //if (result == JOptionPane.YES_OPTION) {
   //
-//      } else if (result == JOptionPane.NO_OPTION) {
-//        return true;  // ok to continue
+  //      } else if (result == JOptionPane.NO_OPTION) {
+  //        return true;  // ok to continue
   //
-//      } else if (result == JOptionPane.CANCEL_OPTION) {
-//        return false;
+  //      } else if (result == JOptionPane.CANCEL_OPTION) {
+  //        return false;
   //
-//      } else {
-//        throw new IllegalStateException();
-//      }
+  //      } else {
+  //        throw new IllegalStateException();
+  //      }
 
   static public int showYesNoQuestion(Frame editor, String title,
-                                            String primary, String secondary) {
+                                      String primary, String secondary) {
     if (!OSUtils.isMacOS()) {
       return JOptionPane.showConfirmDialog(editor,
                                            "<html><body>" +
-                                           "<b>" + primary + "</b>" +
-                                           "<br>" + secondary, title,
-                                           JOptionPane.YES_NO_OPTION,
-                                           JOptionPane.QUESTION_MESSAGE);
+                                               "<b>" + primary + "</b>" +
+                                               "<br>" + secondary, title,
+                                               JOptionPane.YES_NO_OPTION,
+                                               JOptionPane.QUESTION_MESSAGE);
     } else {
       // Pane formatting adapted from the Quaqua guide
       // http://www.randelshofer.ch/quaqua/guide/joptionpane.html
       JOptionPane pane =
-        new JOptionPane("<html> " +
-                        "<head> <style type=\"text/css\">"+
-                        "b { font: 13pt \"Lucida Grande\" }"+
-                        "p { font: 11pt \"Lucida Grande\"; margin-top: 8px }"+
-                        "</style> </head>" +
-                        "<b>" + primary + "</b>" +
-                        "<p>" + secondary + "</p>",
-                        JOptionPane.QUESTION_MESSAGE);
+          new JOptionPane("<html> " +
+              "<head> <style type=\"text/css\">"+
+              "b { font: 13pt \"Lucida Grande\" }"+
+              "p { font: 11pt \"Lucida Grande\"; margin-top: 8px }"+
+              "</style> </head>" +
+              "<b>" + primary + "</b>" +
+              "<p>" + secondary + "</p>",
+              JOptionPane.QUESTION_MESSAGE);
 
       String[] options = new String[] {
           "Yes", "No"
@@ -2124,16 +2426,16 @@ public class Base {
    * may refer to the Contents subfolder of Processing.app, if we bundle things
    * up as a single .app file with no additional folders.
    */
-//  static public String getContentsPath(String filename) {
-//    String basePath = System.getProperty("user.dir");
-//    /*
-//      // do this later, when moving to .app package
-//    if (PApplet.platform == PConstants.MACOSX) {
-//      basePath = System.getProperty("processing.contents");
-//    }
-//    */
-//    return basePath + File.separator + filename;
-//  }
+  //  static public String getContentsPath(String filename) {
+  //    String basePath = System.getProperty("user.dir");
+  //    /*
+  //      // do this later, when moving to .app package
+  //    if (PApplet.platform == PConstants.MACOSX) {
+  //      basePath = System.getProperty("processing.contents");
+  //    }
+  //    */
+  //    return basePath + File.separator + filename;
+  //  }
 
 
   /**
@@ -2154,7 +2456,7 @@ public class Base {
 //    }
     return null;
   }
-  */
+   */
 
   static public File getContentFile(String name) {
     return BaseNoGui.getContentFile(name);
@@ -2239,18 +2541,18 @@ public class Base {
     for (int i = 0; i < lines.length; i++) {
       int hash = lines[i].indexOf('#');
       String line = (hash == -1) ?
-        lines[i].trim() : lines[i].substring(0, hash).trim();
-      if (line.length() == 0) continue;
+                                  lines[i].trim() : lines[i].substring(0, hash).trim();
+                                  if (line.length() == 0) continue;
 
-      int equals = line.indexOf('=');
-      if (equals == -1) {
-        System.err.println("ignoring illegal line in " + inputFile);
-        System.err.println("  " + line);
-        continue;
-      }
-      String attr = line.substring(0, equals).trim();
-      String valu = line.substring(equals + 1).trim();
-      outgoing.put(attr, valu);
+                                  int equals = line.indexOf('=');
+                                  if (equals == -1) {
+                                    System.err.println("ignoring illegal line in " + inputFile);
+                                    System.err.println("  " + line);
+                                    continue;
+                                  }
+                                  String attr = line.substring(0, equals).trim();
+                                  String valu = line.substring(equals + 1).trim();
+                                  outgoing.put(attr, valu);
     }
     return outgoing;
   }
@@ -2259,9 +2561,9 @@ public class Base {
   static public void copyFile(File sourceFile,
                               File targetFile) throws IOException {
     InputStream from =
-      new BufferedInputStream(new FileInputStream(sourceFile));
+        new BufferedInputStream(new FileInputStream(sourceFile));
     OutputStream to =
-      new BufferedOutputStream(new FileOutputStream(targetFile));
+        new BufferedOutputStream(new FileOutputStream(targetFile));
     byte[] buffer = new byte[16 * 1024];
     int bytesRead;
     while ((bytesRead = from.read(buffer)) != -1) {
@@ -2448,7 +2750,7 @@ public class Base {
         String mess = I18n.format(_("The library \"{0}\" cannot be used.\n"
             + "Library names must contain only basic letters and numbers.\n"
             + "(ASCII only and no spaces, and it cannot start with a number)"),
-                                  libName);
+            libName);
         activeEditor.statusError(mess);
         return;
       }
