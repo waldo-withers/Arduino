@@ -1340,129 +1340,6 @@ public void storeSketch(Editor editor) {
       } 
     }
   }
-//-----------------------------------------------------
-//    /**
-//     * Scan a folder recursively, and add any sketches found to the menu
-//     * specified. Set the openReplaces parameter to true when opening the sketch
-//     * should replace the sketch in the current window, or false when the
-//     * sketch should open in a new window.
-//     */
-//    protected boolean addSketches(JMenu menu, File folder, final boolean replaceExisting) throws IOException {
-//      if (folder == null)
-//        return false;
-//  
-//      if (!folder.isDirectory()) return false;
-//  
-//      File[] files = folder.listFiles();
-//      // If a bad folder or unreadable or whatever, this will come back null
-//      if (files == null) return false;
-//  
-//      // Alphabetize files, since it's not always alpha order
-//      Arrays.sort(files, new Comparator<File>() {
-//        @Override
-//        public int compare(File file, File file2) {
-//          return file.getName().compareToIgnoreCase(file2.getName());
-//        }
-//      });
-//  
-//      boolean ifound = false;
-//  
-//      for (File subfolder : files) {
-//        if (FileUtils.isSCCSOrHiddenFile(subfolder)) {
-//          continue;
-//        }
-//  
-//        if (!subfolder.isDirectory()) continue;
-//  
-//        if (addSketchesSubmenu(menu, subfolder.getName(), subfolder, replaceExisting)) {
-//          ifound = true;
-//        }
-//      }
-//  
-//      return ifound;
-//    }
-//  
-//    private boolean addSketchesSubmenu(JMenu menu, Library lib,
-//                                       boolean replaceExisting)
-//        throws IOException {
-//      return addSketchesSubmenu(menu, lib.getName(), lib.getFolder(),
-//                                replaceExisting);
-//    }
-//  
-//    private boolean addSketchesSubmenu(JMenu menu, String name, File folder,
-//                           final boolean replaceExisting) throws IOException {
-//    
-//      ActionListener listener = new ActionListener() {
-//        public void actionPerformed(ActionEvent e) {
-//          String path = e.getActionCommand();
-//          File file = new File(path);
-//          if (file.exists()) {
-//            boolean replace = replaceExisting;
-//            if ((e.getModifiers() & ActionEvent.SHIFT_MASK) != 0) {
-//              replace = !replace;
-//            }
-//            if (replace) {
-//              handleOpenReplace(file);
-//            } else {
-//              try {
-//                handleOpen(file);
-//              } catch (Exception e1) {
-//                e1.printStackTrace();
-//              }
-//            }
-//          } else {
-//            showWarning(_("Sketch Does Not Exist"),
-//                        _("The selected sketch no longer exists.\n"
-//                            + "You may need to restart Arduino to update\n"
-//                            + "the sketchbook menu."), null);
-//          }
-//        }
-//      };
-//  
-//      File entry = new File(folder, name + ".ino");
-//      if (!entry.exists() && (new File(folder, name + ".pde")).exists())
-//        entry = new File(folder, name + ".pde");
-//  
-//      // if a .pde file of the same prefix as the folder exists..
-//      if (entry.exists()) {
-//  
-//        if (!BaseNoGui.isSanitaryName(name)) {
-//          if (!builtOnce) {
-//            String complaining = I18n
-//                .format(
-//                        _("The sketch \"{0}\" cannot be used.\n"
-//                            + "Sketch names must contain only basic letters and numbers\n"
-//                            + "(ASCII-only with no spaces, "
-//                            + "and it cannot start with a number).\n"
-//                            + "To get rid of this message, remove the sketch from\n"
-//                            + "{1}"), name, entry.getAbsolutePath());
-//            showMessage(_("Ignoring sketch with bad name"), complaining);
-//          }
-//          return false;
-//        }
-//  
-//        JMenuItem item = new JMenuItem(name);
-//        item.addActionListener(listener);
-//        item.setActionCommand(entry.getAbsolutePath());
-//        menu.add(item);
-//        return true;
-//      }
-//  
-//      // don't create an extra menu level for a folder named "examples"
-//      if (folder.getName().equals("examples"))
-//        return addSketches(menu, folder, replaceExisting);
-//  
-//      // not a sketch folder, but maybe a subfolder containing sketches
-//      JMenu submenu = new JMenu(name);
-//      boolean found = addSketches(submenu, folder, replaceExisting);
-//      if (found) {
-//        menu.add(submenu);
-//        MenuScroller.setScrollerFor(submenu);
-//      }
-//      return found;
-//    }
-
-// ---------------------------------------------------------------
 
   /**
    * A data structure for holding files and folders, used for both the
@@ -1476,19 +1353,6 @@ public void storeSketch(Editor editor) {
     private File folder;
     private List<FileTree> subfolders;
     private List<File> files;
-
-    // /**
-    // * Default constructor. A new FileTree with a null root and no
-    // * subfolders or files.
-    // */
-    // public FileTree() {
-    // this(null);
-    // }
-
-    // /** Add the folder f as the root of the tree. */
-    // public void addRoot(File f) {
-    // folder = f;
-    // }
 
     /**
      * Constructor. A new FileTree with root root and no subfolders or
@@ -1505,11 +1369,6 @@ public void storeSketch(Editor editor) {
       return (folder != null ? folder.getName() : null);
     }
 
-    /** The root folder of this subtree. */
-    public File getRoot() {
-      return folder;
-    }
-
     /** Add the FileTree sf representing a subfolder. */
     public void addSubfolder(FileTree sf) {
       subfolders.add(sf);
@@ -1522,7 +1381,6 @@ public void storeSketch(Editor editor) {
 
     /** There are no subfolders in this tree */
     public boolean hasNoChildren() {
-      // TODO Auto-generated method stub
       return subfolders.isEmpty();
     }
     
@@ -1628,7 +1486,7 @@ public void storeSketch(Editor editor) {
     return ifound;
   }
 
-  /** Add the file file to the tree tree, be it a file or a folder 
+  /** Add the file file to the tree tree, be it a file or a folder.
    * @return */
   private boolean addSubfile(FileTree tree, File file) {
     String name = file.getName(); // The name of the folder.
@@ -1681,21 +1539,19 @@ public void storeSketch(Editor editor) {
                                    final boolean replaceExisting) {
     for (FileTree subfolder : tree.subfolders) {      
       if (subfolder.hasNoChildren()) {
-        for (File subfile : subfolder.files) {
+        for (final File subfile : subfolder.files) {
         ActionListener listener = new ActionListener() {
           public void actionPerformed(ActionEvent e) {
-            String path = e.getActionCommand();
-            File file = new File(path);
-            if (file.exists()) {
+            if (subfile.exists()) {
               boolean replace = replaceExisting;
               if ((e.getModifiers() & ActionEvent.SHIFT_MASK) != 0) {
                 replace = !replace;
               }
               if (replace) {
-                handleOpenReplace(file);
+                handleOpenReplace(subfile);
               } else {
                 try {
-                  handleOpen(file);
+                  handleOpen(subfile);
                 } catch (Exception e1) {
                   e1.printStackTrace();
                 }
@@ -1709,10 +1565,9 @@ public void storeSketch(Editor editor) {
           }
         };
         String name= subfile.getName();
-        name= name.substring(0,name.length()-5);
+        name= name.substring(0,name.length()-4); // trim off the extension.
         JMenuItem item = new JMenuItem(name);
         item.addActionListener(listener);
-        item.setActionCommand(subfile.getAbsolutePath());
         menu.add(item);
         }
       } else {
