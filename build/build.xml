@@ -324,7 +324,7 @@
       <bundledocument extensions="ino,c,cpp,h"
                       icon="macosx/template.app/Contents/Resources/pde.icns"
                       name="Arduino Source File"
-                      role="Editor">
+                      role="Editor" ispackage="false">
       </bundledocument>
 
     </bundleapp>
@@ -367,10 +367,10 @@
   <target name="macosx-build-common-avr-toolchain" unless="light_bundle">
     <antcall target="avr-toolchain-bundle">
       <param name="unpack_target" value="untar"/>
-      <param name="gcc_archive_file" value="avr-gcc-4.8.1-arduino3-i386-apple-darwin11.tar.bz2"/>
-      <param name="gcc_version" value="4.8.1-arduino3"/>
-      <param name="avrdude_archive_file" value="avrdude-6.0.1-arduino3-i386-apple-darwin11.tar.bz2"/>
-      <param name="avrdude_version" value="6.0.1-arduino3"/>
+      <param name="gcc_archive_file" value="avr-gcc-4.8.1-arduino5-i386-apple-darwin11.tar.bz2"/>
+      <param name="gcc_version" value="4.8.1-arduino5"/>
+      <param name="avrdude_archive_file" value="avrdude-6.0.1-arduino5-i386-apple-darwin11.tar.bz2"/>
+      <param name="avrdude_version" value="6.0.1-arduino5"/>
     </antcall>
 
     <chmod perm="+x">
@@ -612,20 +612,20 @@
   <target name="linux32-build" depends="linux-build" unless="light_bundle" description="Build linux (32-bit) version">
     <antcall target="avr-toolchain-bundle">
       <param name="unpack_target" value="untar"/>
-      <param name="gcc_archive_file" value="avr-gcc-4.8.1-arduino3-i686-pc-linux-gnu.tar.bz2"/>
-      <param name="gcc_version" value="4.8.1-arduino3"/>
-      <param name="avrdude_archive_file" value="avrdude-6.0.1-arduino3-i686-pc-linux-gnu.tar.bz2"/>
-      <param name="avrdude_version" value="6.0.1-arduino3"/>
+      <param name="gcc_archive_file" value="avr-gcc-4.8.1-arduino5-i686-pc-linux-gnu.tar.bz2"/>
+      <param name="gcc_version" value="4.8.1-arduino5"/>
+      <param name="avrdude_archive_file" value="avrdude-6.0.1-arduino5-i686-pc-linux-gnu.tar.bz2"/>
+      <param name="avrdude_version" value="6.0.1-arduino5"/>
     </antcall>
   </target>
 
   <target name="linux64-build" depends="linux-build"  unless="light_bundle" description="Build linux (64-bit) version">
     <antcall target="avr-toolchain-bundle">
       <param name="unpack_target" value="untar"/>
-      <param name="gcc_archive_file" value="avr-gcc-4.8.1-arduino3-x86_64-pc-linux-gnu.tar.bz2"/>
-      <param name="gcc_version" value="4.8.1-arduino3"/>
-      <param name="avrdude_archive_file" value="avrdude-6.0.1-arduino3-x86_64-pc-linux-gnu.tar.bz2"/>
-      <param name="avrdude_version" value="6.0.1-arduino3"/>
+      <param name="gcc_archive_file" value="avr-gcc-4.8.1-arduino5-x86_64-pc-linux-gnu.tar.bz2"/>
+      <param name="gcc_version" value="4.8.1-arduino5"/>
+      <param name="avrdude_archive_file" value="avrdude-6.0.1-arduino5-x86_64-pc-linux-gnu.tar.bz2"/>
+      <param name="avrdude_version" value="6.0.1-arduino5"/>
     </antcall>
   </target>
 
@@ -841,10 +841,10 @@
   <target name="windows-build-avr-toolchain">
     <antcall target="avr-toolchain-bundle">
       <param name="unpack_target" value="unzip"/>
-      <param name="gcc_archive_file" value="avr-gcc-4.8.1-arduino3-i686-mingw32.zip"/>
-      <param name="gcc_version" value="4.8.1-arduino3"/>
-      <param name="avrdude_archive_file" value="avrdude-6.0.1-arduino3-i686-mingw32.zip"/>
-      <param name="avrdude_version" value="6.0.1-arduino3"/>
+      <param name="gcc_archive_file" value="avr-gcc-4.8.1-arduino5-i686-mingw32.zip"/>
+      <param name="gcc_version" value="4.8.1-arduino5"/>
+      <param name="avrdude_archive_file" value="avrdude-6.0.1-arduino5-i686-mingw32.zip"/>
+      <param name="avrdude_version" value="6.0.1-arduino5"/>
     </antcall>
   </target>
 
@@ -951,8 +951,9 @@
     <echo append="true" file="${staging_folder}/work/${staging_hardware_folder}/tools/avr/builtin_tools_versions.txt" message="arduino.avrdude=${avrdude_version}${line.separator}"/>
     <echo append="true" file="${staging_folder}/work/${staging_hardware_folder}/tools/avr/builtin_tools_versions.txt" message="arduino.avr-gcc=${gcc_version}${line.separator}"/>
 
-    <copy file="shared/bundled_package_index.json" tofile="${staging_folder}/work/${staging_hardware_folder}/../dist/package_index.json"/>
-    <copy file="shared/bundled_library_index.json" tofile="${staging_folder}/work/${staging_hardware_folder}/../dist/library_index.json"/>
+    <mkdir dir="${staging_folder}/work/${staging_hardware_folder}/../dist/"/>
+    <get src="http://downloads.arduino.cc/packages/package_index.json" dest="${staging_folder}/work/${staging_hardware_folder}/../dist/package_index.json" verbose="true" skipexisting="false" />
+    <get src="http://downloads.arduino.cc/libraries/library_index.json" dest="${staging_folder}/work/${staging_hardware_folder}/../dist/library_index.json" verbose="true" skipexisting="false" />
 
     <delete dir="${staging_folder}/work/${staging_hardware_folder}/tmp"/>
   </target>

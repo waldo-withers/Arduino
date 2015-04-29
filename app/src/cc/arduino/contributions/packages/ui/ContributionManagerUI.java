@@ -87,7 +87,7 @@ public class ContributionManagerUI extends InstallerJDialog {
   }
 
   public ContributionManagerUI(Frame parent) {
-    super(parent, _("Boards Manager"), Dialog.ModalityType.APPLICATION_MODAL, _("No internet connection available, the list of available boards is not complete. You will be able to manage only the boards you've already installed."));
+    super(parent, _("Boards Manager"), Dialog.ModalityType.APPLICATION_MODAL, _("Unable to reach Arduino.cc due to possible network issues."));
   }
 
   public void setIndexer(ContributionsIndexer indexer) {
@@ -196,7 +196,7 @@ public class ContributionManagerUI extends InstallerJDialog {
     clearErrorMessage();
 
     if (showWarning) {
-      int chosenOption = JOptionPane.showConfirmDialog(getParent(), I18n.format(_("Do you want to remove {0}?\nIf you do so you won't be able to use {0} any more."), platform.getName()), _("Please confirm boards deletion"), JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
+      int chosenOption = JOptionPane.showConfirmDialog(this, I18n.format(_("Do you want to remove {0}?\nIf you do so you won't be able to use {0} any more."), platform.getName()), _("Please confirm boards deletion"), JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
       if (chosenOption != JOptionPane.YES_OPTION) {
         return;
       }
